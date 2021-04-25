@@ -76,8 +76,11 @@ module keccak512 (
 		msg <= { data, 576'h010000000000008000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000, 512'd0 };
 
 		i0 <= data_le;
+		
+		//take combinational output and roundkey to register for next round
 		i1[1599:1536] <= o0[1599:1536] ^ 64'h0000000000000001;
 		i1[1535:   0] <= o0[1535:   0];
+		
 		i2[1599:1536] <= o1[1599:1536] ^ 64'h0000000000008082;
 		i2[1535:   0] <= o1[1535:   0];
 		i3[1599:1536] <= o2[1599:1536] ^ 64'h800000000000808a;
@@ -166,6 +169,7 @@ module keccak_round (
 
 	end
 	
+	//this is only FF in this module, has combinational output
 	always @ (posedge clk) begin
 
 		t00 <= b04 ^ { b01[62:0], b01[63] };
@@ -306,7 +310,7 @@ module keccak_round (
 
 	end
 	
-	always @ (posedge clk) begin
+	always @ (*) begin
 
 		s4 <= s3;
 
